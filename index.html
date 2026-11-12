@@ -48,8 +48,14 @@ img.av{width:120px;height:120px;object-fit:cover;object-position:center 30%;back
 .shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-top:12px}
 .shots img{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:zoom-in}
 .rvh{margin:0 0 16px;color:var(--mute)}.rvh b{color:var(--ink)}.rvh a{color:var(--acc)}
-.rvs{columns:2 300px;column-gap:14px}
-.rc{break-inside:avoid;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:0 0 14px}
+.rvs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}
+.rc{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:0;min-width:0}
+.review-controls{display:flex;align-items:flex-end;flex-wrap:wrap;gap:12px;margin:-2px 0 16px}
+.review-filter{display:flex;flex-direction:column;gap:5px;color:var(--mute);font-size:13px;font-weight:600}
+.review-filter select{min-height:42px;min-width:190px;padding:8px 36px 8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font:inherit;font-size:14px;cursor:pointer}
+.review-filter select:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+#reviewCount{margin-left:auto;padding:0 0 8px;color:var(--mute);font-size:13px}
+@media(max-width:480px){.review-filter{flex:1 1 100%}.review-filter select{width:100%}#reviewCount{width:100%;margin:0;padding:0}}
 .rh{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14px;color:var(--mute)}
 .rh b{color:var(--ink)}.rt{color:#d89b00;font-weight:700}
 .rc p{margin:10px 0 0;font-size:15px}
@@ -121,7 +127,29 @@ img.av{width:120px;height:120px;object-fit:cover;object-position:center 30%;back
 <section>
   <h2>Что говорят ученики и родители</h2>
   <p class="rvh"><b>★ 4,9</b> · 37 отзывов с Repetit.ru · <a href="https://repetit.ru/repetitor.aspx?id=71958#feedbacks">читать на сайте</a></p>
-  <div class="rvs">
+  <div class="review-controls" aria-label="Сортировка и фильтр отзывов">
+    <label class="review-filter" for="reviewSort">Сортировать по
+      <select id="reviewSort">
+        <option value="date-desc">Сначала новые</option>
+        <option value="date-asc">Сначала старые</option>
+        <option value="rating-desc">Сначала высокая оценка</option>
+        <option value="rating-asc">Сначала низкая оценка</option>
+      </select>
+    </label>
+    <label class="review-filter" for="reviewRating">Оценка
+      <select id="reviewRating">
+        <option value="all">Все оценки</option>
+        <option value="5.0">★ 5,0</option>
+        <option value="4.8">★ 4,8</option>
+        <option value="4.7">★ 4,7</option>
+        <option value="4.5">★ 4,5</option>
+        <option value="4.0">★ 4,0</option>
+        <option value="2.0">★ 2,0</option>
+      </select>
+    </label>
+    <span id="reviewCount" aria-live="polite"></span>
+  </div>
+  <div class="rvs" id="reviewsList">
     <article class="rc"><div class="rh"><span class="rt">★ 5,0</span><span class="dt"><b>Екатерина</b> · 20 июня 2025</span></div><p>С Юлией Дмитриевной мой сын занимался математикой и физикой с 8 по 11 класс. В 9 классе сдал ОГЭ на высокие баллы, в 11 классе (2025г. ) ЕГЭ по математике на 95 баллов, по физике на 90 баллов. Очень благодарны Юлии Дмитриевне за высокий профессионализм, преподавательский талант, человечность, добропорядочность, умение системно давать информацию и за подготвку на высокие баллы на экзаменах. Рекомендую этого преподавателя.</p><div class="rep"><b>Ответ репетитора:</b> Спасибо за доверие! Поздравляю Артема с поступлением на ВМК МГУ на бюджет!</div></article>
     <article class="rc"><div class="rh"><span class="rt">★ 5,0</span><span class="dt"><b>Павел</b> · 11 июня 2025</span></div><p>Юлия, спасибо огромное! Дочка готовилась к сдаче ОГЭ по математике, результат - твердая 4! Мы очень довольны и можем смело рекомендовать Юлию! Дочке очень понравилось с ней заниматься, объясняет очень понятно! Будем дальше заниматься!</p></article>
     <article class="rc"><div class="rh"><span class="rt">★ 5,0</span><span class="dt"><b>Ольга</b> · 11 марта 2025</span></div><p>Со слов клиента: «Положительный отзыв. Хороший репетитор. Занятия были полезными, она помогла подтянуть некоторые темы по математике».</p></article>
@@ -174,10 +202,58 @@ img.av{width:120px;height:120px;object-fit:cover;object-position:center 30%;back
 </div>
 <div id="lb"><img alt=""></div>
 <script>
-(function(){var lb=document.getElementById('lb'),big=lb.querySelector('img');
-document.querySelectorAll('.dip img,.shots img').forEach(function(i){i.addEventListener('click',function(){big.src=i.src;big.alt=i.alt;lb.style.display='flex';});});
-lb.addEventListener('click',function(){lb.style.display='none';});
-document.addEventListener('keydown',function(e){if(e.key==='Escape')lb.style.display='none';});})();
+(function(){
+  var lb=document.getElementById('lb'),big=lb.querySelector('img');
+  document.querySelectorAll('.dip img,.shots img').forEach(function(i){i.addEventListener('click',function(){big.src=i.src;big.alt=i.alt;lb.style.display='flex';});});
+  lb.addEventListener('click',function(){lb.style.display='none';});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')lb.style.display='none';});
+
+  // Сортировка и фильтрация отзывов по оценке и дате публикации.
+  var reviewsList=document.getElementById('reviewsList');
+  var sortSelect=document.getElementById('reviewSort');
+  var ratingSelect=document.getElementById('reviewRating');
+  var countLabel=document.getElementById('reviewCount');
+  if(reviewsList&&sortSelect&&ratingSelect&&countLabel){
+    var monthNumbers={
+      'января':0,'февраля':1,'марта':2,'апреля':3,'мая':4,'июня':5,
+      'июля':6,'августа':7,'сентября':8,'октября':9,'ноября':10,'декабря':11
+    };
+    var reviews=Array.from(reviewsList.querySelectorAll('.rc')).map(function(card,index){
+      var ratingText=card.querySelector('.rt')?.textContent||'';
+      var ratingMatch=ratingText.match(/[0-5](?:[,.][0-9])?/);
+      var dateText=card.querySelector('.dt')?.textContent||'';
+      var dateMatch=dateText.match(/(\d{1,2})\s+([а-яё]+)\s+(\d{4})/i);
+      var dateValue=0;
+      if(dateMatch&&monthNumbers[dateMatch[2].toLowerCase()]!==undefined){
+        dateValue=new Date(Number(dateMatch[3]),monthNumbers[dateMatch[2].toLowerCase()],Number(dateMatch[1])).getTime();
+      }
+      return {element:card,index:index,rating:ratingMatch?Number(ratingMatch[0].replace(',','.')):0,date:dateValue};
+    });
+
+    function updateReviews(){
+      var selectedRating=ratingSelect.value;
+      var visibleReviews=reviews.filter(function(review){
+        return selectedRating==='all'||review.rating.toFixed(1)===selectedRating;
+      });
+      var sortMode=sortSelect.value;
+      visibleReviews.sort(function(a,b){
+        if(sortMode==='date-asc')return a.date-b.date||a.index-b.index;
+        if(sortMode==='rating-desc')return b.rating-a.rating||b.date-a.date||a.index-b.index;
+        if(sortMode==='rating-asc')return a.rating-b.rating||b.date-a.date||a.index-b.index;
+        return b.date-a.date||a.index-b.index;
+      });
+      reviews.forEach(function(review){review.element.hidden=true;});
+      visibleReviews.forEach(function(review){
+        review.element.hidden=false;
+        reviewsList.appendChild(review.element);
+      });
+      countLabel.textContent='Показано '+visibleReviews.length+' из '+reviews.length+' отзывов';
+    }
+    sortSelect.addEventListener('change',updateReviews);
+    ratingSelect.addEventListener('change',updateReviews);
+    updateReviews();
+  }
+})();
 </script>
 </body>
 </html>
